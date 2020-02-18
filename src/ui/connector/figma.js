@@ -66,5 +66,5 @@ const parseMessage = (msg) => {
     MAPPING[type](data);
 }
 
-export default { parseMessage, retrievePages, retrieveFrames, retrieveText }
+export default { parseMessage, retrievePages, retrieveFrames, retrieveText, changeText }
 

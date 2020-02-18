@@ -1,12 +1,14 @@
+//
+// 6160
+//
 
-// async function changetext(node) {
-//   await figma.loadFontAsync({ family: "Montserrat", style: "Light" })
-//   await figma.loadFontAsync({ family: "Montserrat", style: "Regular" })
-//   await figma.loadFontAsync({ family: "Helvetica", style: "Regular" })
-//   await figma.loadFontAsync({ family: "Roboto", style: "Regular" })
-//   node.characters = 'DIOCANEDIO'
-// }
-
+async function loadFonts(fonts) {
+  fonts.forEach(async (font) => {
+    await figma.loadFontAsync(font)  
+  });
+  
+  console.log('[FIGMA][LOADFONTS] fonts loaded: ', fonts.length);
+}
 
 // getting page with page id
 const getPage = (params) => {
@@ -90,23 +92,23 @@ const getFrame = (params) => {
 }
 
 let textAggregator = [];
+let usedFonts = [];
 function traverseText(node) {
   console.log('[FIGMA][GETTEXTSTRAVERSE] start node: ', node)
+  if (node.type === 'TEXT') {
+    console.log('[FIGMA][GETTEXTSTRAVERSE] found TEXT: ', node)
+    textAggregator.push({id: node.id, name: node.name, text: node.characters})
+    usedFonts.push(node.fontName);
+    return true;
+  }
   if ("children" in node) {
-    console.log('[FIGMA][GETTEXTSTRAVERSE] found children in node with type: ', node.type);
-    if (node.type === 'TEXT') {
-      console.log('[FIGMA][GETTEXTSTRAVERSE] found TEXT: ', node)
-      textAggregator.push({id: node.id, name: node.name, text: node.characters})
-      return true;
+    console.log('[FIGMA][GETTEXTSTRAVERSE] found children in node: ', node.children);
+    
+    for (const child of node.children) {
+      console.log('[FIGMA][GETTEXTSTRAVERSE] start new traverse with child/parent: ', child, node)
+      traverseText( child)
     }
-
-    if (node.type !== "INSTANCE") {
-      console.log('[FIGMA][GETTEXTSTRAVERSE] node is not INSTANCE but: ', node.type)
-      for (const child of node.children) {
-        console.log('[FIGMA][GETTEXTSTRAVERSE] start new traverse with child/parent: ', child, node)
-        traverseText( child)
-      }
-    }
+    
   }
 }
 
@@ -131,13 +133,18 @@ const getTexts = (params) => {
   })
 }
 const getTextsTraverse = (params) => {
+  // resetting text aggregator
+  textAggregator = [];
   console.log('[FIGMA][GETTEXTSTRAVERSE] start with params: ', params)
   const frame = getFrame(params);
-  const done = traverseText(frame);
+  // const done = traverseText(frame);
+  traverseText(frame);
+  // const textList = done ? textAggregator : [];  
+  const textList = textAggregator
+  // console.log('[FIGMA][GETTEXTSTRAVERSE] done? ', done)
+  console.log('[FIGMA][GETTEXTSTRAVERSE] end. found: ', textList)
 
-  const textList = done ? textAggregator : [];  
-
-  console.log('[FIGMA][GETTEXTS] end. found: ', textList)
+  loadFonts(usedFonts);
 
   figma.ui.postMessage({
       type: 'getText',
@@ -146,22 +153,37 @@ const getTextsTraverse = (params) => {
 }
 
 
-
+// TODO: this isnt working. it does not load any texts in textAggregator. why?  ¯\_(ツ)_/¯
+// it loads! but you need to load the f'ing node with the f'ing `getNodeById` method you moron.
 const getText = (params) => {
-  const frame = getFrame(params);
-  
-  for (const child of frame.children) {
-    if (child.type === 'TEXT' && child.id === params.id) {
-      return child;
-    }
-  }
+  console.log('[FIGMA][GETTEXT] get text requested with params: ', params)
+  const frame = getFrame(params.selected);
+  textAggregator = [];
+
+  traverseText(frame);
+
+  const textList = textAggregator;
+  console.log('[FIGMA][GETTEXT] found this texts: ', textList)
+
+  const result = textList.filter(t => t.id !== params.id)
+
+  console.log('[FIGMA][GETTEXT] result: ', result)
+
+  return result[0] || null;
 }
 
 const changeText = (params) => {
+  console.log('[FIGMA][CHANGETEXT] change text requested with params: ', params)
   const text = getText(params);
   const newCharacters = params.characters;
+  
+  console.log('[FIGMA][CHANGETEXT] found text: ', text)
+  if (text) {
+    console.log('[FIGMA][CHANGETEXT] changing text to: ', newCharacters)
+    text.characters = newCharacters;
+  }
 
-  text.characters = newCharacters;
+  // getTexts(params.selected);
 }
 
 
@@ -196,7 +218,7 @@ figma.ui.onmessage = msg => {
   }
 
   if (msg.type === 'changeText') {
-    if (msg.id) changeText(msg);
+    if (msg.params) changeText(msg.params);
   }
 
 
