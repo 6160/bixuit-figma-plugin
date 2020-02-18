@@ -1,0 +1,7 @@
+{
+  "name": "Bixuit text changer",
+  "id": "12345",
+  "api": "1.0.0",
+  "main": "./main.js",
+  "ui": "./index.html"
+}
