@@ -126,31 +126,29 @@ figma.showUI(__html__, {
   height: 520
 });
 
-const ROOTPAGES = getPages()
+
 // send pages list at startup
+const ROOTPAGES = getPages()
 figma.ui.postMessage({ type: 'getPages', data: ROOTPAGES });
 
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
+// handling messages from UI
 figma.ui.onmessage = msg => {
   console.log('[FIGMA] arrived message: ', msg.type, msg);
 
   // retrieve frame handler  
   if (msg.type === 'retrieveFrames') {
-    if (msg.id) getFrames({id: msg.id, type: 'FRAME'});
+    if (msg.id) return getFrames({id: msg.id, type: 'FRAME'});
   }
 
   if (msg.type === 'retrieveText') {
-    if (msg.selected) getTextsTraverse(msg.selected);
+    if (msg.selected) return getTextsTraverse(msg.selected);
   }
 
   if (msg.type === 'retrievePages') {
-    figma.ui.postMessage({ type: 'getPages', data: ROOTPAGES });
+    return figma.ui.postMessage({ type: 'getPages', data: ROOTPAGES });
   }
 
   if (msg.type === 'changeText') {
-    if (msg.params) changeText(msg.params);
+    if (msg.params) return changeText(msg.params);
   }
-
 }
