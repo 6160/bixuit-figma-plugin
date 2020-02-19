@@ -8,6 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     navigation: [{id: '', method:'getPages', level: 0}],
+    // listHeader: [{text: 'PAGES', href: '#'}],
     listHeader: ['PAGES'],
     list: [],
     texts: [],
@@ -34,6 +35,7 @@ export default new Vuex.Store({
     getFrames(state, page) {
       state.selected.page = page.id; 
       connector.retrieveFrames(state.selected);
+      // state.listHeader.push({text: page.name, href: '#'});
       state.listHeader.push(page.name);
       state.navigation.push({id: page,  method:'getFrames', level: 1});
       
@@ -42,9 +44,13 @@ export default new Vuex.Store({
       state.list = frames;
     },
     getText(state, frame) {
-      if (state.selected.frame) state.listHeader.pop();
+      if (state.listHeader.length === 3) {
+       console.log(' A&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        state.listHeader.pop();
+      }
       state.selected.frame = frame.id;
       connector.retrieveText(state.selected);
+      // state.listHeader.push({text: frame.name, href: '#'});
       state.listHeader.push(frame.name);
       state.currentLevel = 2;
     },
@@ -68,7 +74,7 @@ export default new Vuex.Store({
   },
   getters: {
     list: state => state.list,
-    listHeader: state => state.listHeader.join(' > '),
+    listHeader: state => state.listHeader,//.join(' > '),
     texts: state => state.texts,
     level: state => state.currentLevel,
     current: state => state.navigation[state.navigation.length -1],

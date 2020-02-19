@@ -63,7 +63,7 @@ let usedFonts = [];
 function traverseText(node) {
   console.log('[FIGMA][GETTEXTSTRAVERSE] start node: ', node);
 
-  if (node.type === 'TEXT') {
+  if (node.type === 'TEXT' && node.visible) {
     console.log('[FIGMA][GETTEXTSTRAVERSE] found TEXT: ', node);
     textAggregator.push({id: node.id, name: node.name, text: node.characters});
     usedFonts.push(node.fontName);
@@ -122,8 +122,8 @@ const changeText = (params) => {
 
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__, {
-  width: 600,
-  height: 520
+  width: 1024,
+  height: 768
 });
 
 
