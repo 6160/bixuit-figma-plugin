@@ -43,17 +43,15 @@ const levelMapping = {
 // messages from FIGMA
 onmessage = (event) => connector.parseMessage(event);
 
-
 export default {
   methods: {
     changed: function(event) {
-      // console.log("changed: ", event.target.value);
       const params = {
         id: event.target.id, 
         characters: event.target.value
       };
 
-      this.$store.commit('changeText', params)
+      this.$store.commit('changeText', params);
     },
     previous: function() {
       this.$store.commit("back");
@@ -64,18 +62,11 @@ export default {
       const step = this.$store.getters.current;
       const texts = this.$store.getters.texts;
 
-      // console.log('STEP LEVEL ', step.level )
-      // console.log('TEXT ', texts)
-      // if (!texts.length >  0) return;
       const method = levelMapping[step.level + 1];
 
       if (this.$store.getters.level === 2) return;
       
-      // console.log(event.target.textContent)
-      // console.log(method);
       this.$store.commit(method, {id: event.target.id, name: event.target.textContent});
-
-      // console.log(event.target.id);
     }
   }
 };
