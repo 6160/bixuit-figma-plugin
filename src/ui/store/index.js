@@ -45,7 +45,6 @@ export default new Vuex.Store({
     },
     getText(state, frame) {
       if (state.listHeader.length === 3) {
-       console.log(' A&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
         state.listHeader.pop();
       }
       state.selected.frame = frame.id;
