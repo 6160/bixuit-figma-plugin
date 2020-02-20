@@ -2,17 +2,20 @@
 // 6160
 //
 
+const ENABLELOG = true;
+const log = message => { if (ENABLELOG) console.log(message) }
+
 async function loadFonts(fonts) {
   fonts.forEach(async (font) => {
     await figma.loadFontAsync(font)  
   });
   
-  console.log('[FIGMA][LOADFONTS] fonts loaded: ', fonts.length);
+  log(`[FIGMA][LOADFONTS] fonts loaded: ${fonts.length}`);
 }
 
 // getting all pages
 const getPages = () => {
-  console.log('[FIGMA][GETPAGES] start getting all pages');
+  log(`[FIGMA][GETPAGES] start getting all pages`);
 
   const pages = [];
 
@@ -21,7 +24,7 @@ const getPages = () => {
     pages.push({id: node.id, name: node.name});
   }
   
-  console.log('[FIGMA][GETPAGES] end. found: ', pages);
+  log(`[FIGMA][GETPAGES] end. found: ${pages}`);
   return pages;
 }
 
@@ -44,12 +47,12 @@ function traverse(node, type) {
 
 // getting all frames from page id
 const getFrames = (params) => {
-  console.log('[FIGMA][GETFRAMES] start with params: ', params);
+  log(`[FIGMA][GETFRAMES] start with params: ${params}`);
 
   const page = figma.getNodeById(params.id);
   const frames = traverse(page, 'FRAME');
 
-  console.log('[FIGMA][GETFRAMES] end. found: ', frames);
+  log(`[FIGMA][GETFRAMES] end. found:  ${frames}`);
   
   figma.ui.postMessage({
     type: 'getFrames',
@@ -61,19 +64,19 @@ let textAggregator = [];
 let usedFonts = [];
 // recursive function for finding texts
 function traverseText(node) {
-  console.log('[FIGMA][GETTEXTSTRAVERSE] start node: ', node);
+  log(`[FIGMA][GETTEXTSTRAVERSE] start node: ${node}`);
 
   if (node.type === 'TEXT' && node.visible) {
-    console.log('[FIGMA][GETTEXTSTRAVERSE] found TEXT: ', node);
+    log(`[FIGMA][GETTEXTSTRAVERSE] found TEXT: ${node}`);
     textAggregator.push({id: node.id, name: node.name, text: node.characters});
     usedFonts.push(node.fontName);
     return true;
   }
   if ("children" in node) {
-    console.log('[FIGMA][GETTEXTSTRAVERSE] found children in node: ', node.children);
+    log(`[FIGMA][GETTEXTSTRAVERSE] found children in node: ${node.children}`);
     
     for (const child of node.children) {
-      console.log('[FIGMA][GETTEXTSTRAVERSE] start new traverse with child/parent: ', child, node);
+      log(`[FIGMA][GETTEXTSTRAVERSE] start new traverse with child/parent: ${child} - ${node}`);
       traverseText(child);
     }
     
@@ -85,14 +88,14 @@ function traverseText(node) {
 const getTextsTraverse = (params) => {
   // resetting text aggregator
   textAggregator = [];
-  console.log('[FIGMA][GETTEXTSTRAVERSE] start with params: ', params);
+  log(`[FIGMA][GETTEXTSTRAVERSE] start with params: ${params}`);
   const frame = figma.getNodeById(params.frame);
   
   traverseText(frame);
   
   const textList = textAggregator;
   
-  console.log('[FIGMA][GETTEXTSTRAVERSE] end. found: ', textList);
+  log(`[FIGMA][GETTEXTSTRAVERSE] end. found: ${textList}`);
 
   loadFonts(usedFonts);
 
@@ -103,16 +106,16 @@ const getTextsTraverse = (params) => {
 }
 
 const changeText = (params) => {
-  console.log('[FIGMA][CHANGETEXT] change text requested with params: ', params);
+  log(`[FIGMA][CHANGETEXT] change text requested with params: ${params}`);
 
   const newCharacters = params.characters;
   
   const text = figma.getNodeById(params.id);
 
-  console.log('[FIGMA][CHANGETEXT] found text: ', text);
+  log(`[FIGMA][CHANGETEXT] found text: ${text}`);
 
   if (text) {
-    console.log('[FIGMA][CHANGETEXT] changing text to: ', newCharacters);
+    log(`[FIGMA][CHANGETEXT] changing text to: ${newCharacters}`);
     if ('characters' in text) text.characters = newCharacters;
     
   }
@@ -133,7 +136,7 @@ figma.ui.postMessage({ type: 'getPages', data: ROOTPAGES });
 
 // handling messages from UI
 figma.ui.onmessage = msg => {
-  console.log('[FIGMA] arrived message: ', msg.type, msg);
+  log(`[FIGMA] arrived message with type: ${msg.type} and content: ${msg}`);
 
   // retrieve frame handler  
   if (msg.type === 'retrieveFrames') {

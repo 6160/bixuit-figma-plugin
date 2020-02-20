@@ -4,7 +4,7 @@
     <!-- <div v-on:click="previous">{{ $store.getters.listHeader}}</div> -->
     <div id="container" style="display: inline-flex;width: 100%; ">
       <div id="list" style="height: 700px; width: 200px;overflow: auto;">
-        <b-list-group>
+        <b-list-group name='LIST'>
           <b-list-group-item
             v-on:click="loadList"
             v-for="(item, index) in $store.getters.list"
