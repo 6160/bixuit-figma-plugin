@@ -1,19 +1,20 @@
 <template>
-  <div>
-    <div v-on:click="previous">{{ $store.getters.listHeader}}</div>
-    <div id="container" style="display: inline-flex;">
-      <div id="list">
-        <ol>
-          <li
+  <div style="overflow: hidden; height:768px">
+      <b-breadcrumb  v-on:click="previous" :items="$store.getters.listHeader"></b-breadcrumb>
+    <!-- <div v-on:click="previous">{{ $store.getters.listHeader}}</div> -->
+    <div id="container" style="display: inline-flex;width: 100%; ">
+      <div id="list" style="height: 700px; width: 200px;overflow: auto;">
+        <b-list-group name='LIST'>
+          <b-list-group-item
             v-on:click="loadList"
             v-for="(item, index) in $store.getters.list"
             v-bind:key="index"
             v-bind:id="item.id"
             v-bind:name="item.name"
-          >{{item.name}}</li>
-        </ol>
+          >{{item.name}}</b-list-group-item>
+        </b-list-group>
       </div>
-      <div id="text">
+      <div id="text" class="w-100 p-3 bg-secondary text-light" style="height: 700px;overflow: auto">
         <ol>
           <li
             v-for="(item, index) in $store.getters.texts"
@@ -21,7 +22,7 @@
             v-bind:id="item.id"
             v-bind:name="item.name"
           >
-            <input v-on:keyup.enter="changed" name="text" v-bind:value="item.text" v-bind:id="item.id"/>
+              <b-form-input  v-on:keyup.enter="changed" name="text" v-bind:value="item.text" v-bind:id="item.id"/>
           </li>
         </ol>
       </div>
@@ -57,6 +58,7 @@ export default {
       this.$store.commit("back");
       const step = this.$store.getters.current;
       this.$store.commit(step.method, step.id);
+      console.log('[UI][PREVIOUS ####] list header: ', this.$store.getters.listHeader)
     },
     loadList: function(event) {
       const step = this.$store.getters.current;
@@ -67,6 +69,7 @@ export default {
       if (this.$store.getters.level === 2) return;
       
       this.$store.commit(method, {id: event.target.id, name: event.target.textContent});
+      console.log('[UI][NEXT ####] list header: ', this.$store.getters.listHeader)
     }
   }
 };

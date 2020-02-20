@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <Display/>
-    <Frames/>
   </div>
 </template>
 
@@ -13,7 +12,6 @@ export default {
   name: 'App',
   components: {
     Display,
-    Frames
   }
 }
 </script>
