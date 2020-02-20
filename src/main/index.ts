@@ -2,7 +2,7 @@
 // 6160
 //
 
-const ENABLELOG = true;
+const ENABLELOG = false;
 const log = message => { if (ENABLELOG) console.log(message) }
 
 async function loadFonts(fonts) {
@@ -29,13 +29,13 @@ const getPages = () => {
 }
 
 // traverse function for finding children with $type
-function traverse(node, type) {
+function traverse(node, types) {
   const nodeList = [];
 
   if ("children" in node) {
     if (node.type === "PAGE") {
       for (const child of node.children) {
-        if (child.type === type) {
+        if (types.includes(child.type)) {
           nodeList.push({id: child.id, text: child.name});
         }
       }
@@ -50,7 +50,7 @@ const getFrames = (params) => {
   log(`[FIGMA][GETFRAMES] start with params: ${params}`);
 
   const page = figma.getNodeById(params.id);
-  const frames = traverse(page, 'FRAME');
+  const frames = traverse(page, ['FRAME', 'GROUP']);
 
   log(`[FIGMA][GETFRAMES] end. found:  ${frames}`);
   
@@ -60,9 +60,10 @@ const getFrames = (params) => {
   })
 }
 
+
+// recursive function for finding texts
 let textAggregator = [];
 let usedFonts = [];
-// recursive function for finding texts
 function traverseText(node) {
   log(`[FIGMA][GETTEXTSTRAVERSE] start node: ${node}`);
 
@@ -79,7 +80,6 @@ function traverseText(node) {
       log(`[FIGMA][GETTEXTSTRAVERSE] start new traverse with child/parent: ${child} - ${node}`);
       traverseText(child);
     }
-    
   }
 }
 
@@ -138,7 +138,6 @@ figma.ui.postMessage({ type: 'getPages', data: ROOTPAGES });
 figma.ui.onmessage = msg => {
   log(`[FIGMA] arrived message with type: ${msg.type} and content: ${msg}`);
 
-  // retrieve frame handler  
   if (msg.type === 'retrieveFrames') {
     if (msg.id) return getFrames({id: msg.id, type: 'FRAME'});
   }
