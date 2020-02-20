@@ -17,9 +17,10 @@ const parseFrames = (frames) => {
     store.commit('saveFrames', parsed);
 }
 
-const parseText = (msg) => {
+const parseText = (msg, img) => {
     console.log('[UI][PARSETEXT] parsing: ', msg);
     store.commit('saveText', msg);
+    store.commit('saveImg', img);
 }
 
 // to figma
@@ -61,9 +62,10 @@ const parseMessage = (msg) => {
 
     const type = pluginMessage.type;
     const data = pluginMessage.data;
+    const img = pluginMessage.img;
 
     // uuuuuuuuuuhhhh
-    MAPPING[type](data);
+    MAPPING[type](data, img);
 }
 
 export default { parseMessage, retrievePages, retrieveFrames, retrieveText, changeText }

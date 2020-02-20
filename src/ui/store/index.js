@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import connector from '../connector/figma'
-
+let  decoder = new TextDecoder('utf8');
 
 Vue.use(Vuex)
 
@@ -16,7 +16,8 @@ export default new Vuex.Store({
     selected: {
       page: '',
       frame: '',
-    }
+    },
+    frameImg: '',
   },
   mutations: {
     initList(state) {
@@ -56,6 +57,9 @@ export default new Vuex.Store({
     saveText(state, text) {
       state.texts = text;
     },
+    saveImg(state, img) {
+      state.frameImg = 'data:image/svg+xml;base64,' + btoa(decoder.decode(img));
+    },
     back(state) {
       state.texts = [];
       state.navigation.pop();
@@ -78,5 +82,6 @@ export default new Vuex.Store({
     level: state => state.currentLevel,
     current: state => state.navigation[state.navigation.length -1],
     lastChange: state => state.lastChange ? `Changed: ${state.lastChange}` : '',
+    frameImg: state => state.frameImg,
   }
 })

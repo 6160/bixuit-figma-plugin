@@ -99,10 +99,15 @@ const getTextsTraverse = (params) => {
 
   loadFonts(usedFonts);
 
-  figma.ui.postMessage({
-      type: 'getText',
-      data: textList
-  })
+  if (frame.type === 'FRAME') {
+    frame.exportAsync({format: 'SVG'}).then(res => {
+      figma.ui.postMessage({
+        type: 'getText',
+        data: textList,
+        img: res
+      })
+    })
+  }
 }
 
 const changeText = (params) => {
@@ -125,8 +130,8 @@ const changeText = (params) => {
 
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__, {
-  width: 1024,
-  height: 768
+  width: 1280,
+  height: 1024
 });
 
 
