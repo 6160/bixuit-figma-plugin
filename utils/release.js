@@ -33,7 +33,9 @@ function createBuild(version) {
     });
 }
 
-const splitVersion = (versionString) => versionString.split('.').map(s => s * 1)
+function splitVersion(versionString) {
+    return versionString.split('.').map(s => s * 1)
+}
 
 function newPackageJSON(version) {
     let newVersionJSON = packageJSON;
