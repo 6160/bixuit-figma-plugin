@@ -29,7 +29,7 @@ function createBuild(version) {
             return;
         }
 
-        console.log(`Build done: builds/bixuit-text-changer.v${version}.zip\n\nBye.\n`);
+        console.log(`\nBuild done: builds/bixuit-text-changer.v${version}.zip\n\nBye.\n`);
     });
 }
 
