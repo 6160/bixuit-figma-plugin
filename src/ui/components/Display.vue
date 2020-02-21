@@ -14,12 +14,12 @@
           >{{item.name}}</b-list-group-item>
         </b-list-group>
       </div>
-      <div v-if="$store.getters.texts.length" id="text" class="w-100 p-3 bg-secondary text-light" style="height: 980px;overflow: auto;display: inline-flex;">
+      <div v-if="$store.getters.texts.length" id="text" class="w-100 p-3 bg-secondary text-light" style="height: 980px;overflow: auto;display: inline-flex;flex-wrap: wrap;justify-content: center;">
         <div >
-          <img :src="$store.getters.frameImg">
+          <img :src="$store.getters.frameImg" style="max-width: 100%; padding-bottom: 15px; padding-right: 15px;">
         </div>
-        <div style="width: 100%">
-          <ol>
+        <div style="flex-grow: 2;">
+          <ul style="list-style-type: none;padding: 0; margin: 0;">
             <li
               v-for="(item, index) in $store.getters.texts"
               v-bind:key="index"
@@ -29,7 +29,7 @@
             >
                 <b-form-textarea size="sm" rows="3" max-rows="6" v-on:keyup.ctrl.enter="changed" name="text" v-bind:value="item.text" v-bind:id="item.id"/>
             </li>
-          </ol>
+          </ul>
         </div>
       </div>
       <div v-else class="w-100 p-3 bg-secondary text-dark" style="height: 980px;overflow: auto"> 
