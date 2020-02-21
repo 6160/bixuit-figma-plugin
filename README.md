@@ -1,6 +1,6 @@
 # bixuit-figma-plugin
 
-[preview](https://raw.githubusercontent.com/6160/bixuit-figma-plugin/master/preview.gif)
+![preview](https://raw.githubusercontent.com/6160/bixuit-figma-plugin/master/preview.gif)
 
 ## What is it?
 This is a plugin for Figma that enables any user to change the copy of your Figma project without directly handling the components. 
